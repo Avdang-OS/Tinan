@@ -1,5 +1,5 @@
 const config = require('../../config.json');
-const { MessageEmbed, MessageActionRow, MessageButton, Constants, Permissions } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageButton, Permissions } = require('discord.js');
 
 module.exports = {
 	name: 'loa',
@@ -93,8 +93,8 @@ module.exports = {
 				})
 			});
 		} else if (options._subcommand === 'return') {
-			if (!interaction.member.roles.cache.find((r) => r.name === "Developer")) {
-				return interaction.reply({ content: 'You need the Developer role to return from LOA', ephemeral: true });
+			if (!interaction.member.roles.cache.find((r) => r.name === 'AvdanOS Team')) {
+				return interaction.reply({ content: 'You need the AvdanOS Team role to return from LOA', ephemeral: true });
 			}
 
 			if (!interaction.member.roles.cache.find((r) => r.name === "[LOA]")) {
