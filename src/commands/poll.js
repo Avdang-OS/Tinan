@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, ButtonStyle, PermissionsBitField, Colors } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ApplicationCommandOptionType, ButtonStyle, InteractionType, PermissionsBitField, Colors } = require('discord.js');
 
 module.exports = {
   name: 'poll',
@@ -24,13 +24,13 @@ module.exports = {
         {
           name: 'button-1',
           description: 'Button 1',
-          required: true,
+          required: false,
           type: ApplicationCommandOptionType.String,
         },
         {
           name: 'button-2',
           description: 'Button 2',
-          required: true,
+          required: false,
           type: ApplicationCommandOptionType.String,
         },
         {
@@ -79,7 +79,7 @@ module.exports = {
     const timestamp = parseInt(Date.now().toString().substring(0,10)) + interaction.options.getInteger('time') + 1
     let embed = new EmbedBuilder()
       .setTitle(`Poll: ${interaction.options.getString('title')}`)
-      .setDescription(`Poll ends in <t:${timestamp}:R>`)
+      .setDescription(`Poll ends <t:${timestamp}:R>`)
       .setColor(Colors.Blue)
 
     if (interaction.member.permissions.has(PermissionsBitField.Flags.ManageEvents)) {
@@ -110,9 +110,9 @@ module.exports = {
           if (getButton(i.toString())) {
             row2.addComponents(
               new ButtonBuilder()
-              .setCustomId('poll_' + pollId.toString() + '_' + i.toString())
-              .setLabel(getButton(i.toString()))
-              .setStyle(ButtonStyle.Secondary),
+                .setCustomId('poll_' + pollId.toString() + '_' + i.toString())
+                .setLabel(getButton(i.toString()))
+                .setStyle(ButtonStyle.Secondary),
             )
           }
         }
@@ -128,15 +128,16 @@ module.exports = {
           const embed = new EmbedBuilder()
             .setTitle('The poll has been created')
             .setColor(Colors.Green)
+
           interaction.reply({ embeds: [embed], ephemeral: true });
           const collector = interaction.channel.createMessageComponentCollector({ time: interaction.options.getInteger('time') * 1000 });
           collector.client.on('interactionCreate', (interact) => {
-            if (interact.isCommand()) if (interact.commandName == 'poll') if (interact.options._subcommand == 'end') if (interact.options.getInteger('id') == pollId) collector.stop();
+            if (interact.type === InteractionType.ApplicationCommand) if (interact.commandName === 'poll') if (interact.options._subcommand === 'end') if (interact.options.getInteger('id') === pollId) collector.stop();
           })
 
           collector.on('collect', () => {
             embed.fields[0].value = Object.values(pollsList[pollId]).length.toString()
-            message.edit({ embeds: [embed] })
+            message.edit({ embeds: [embed] });
           });
 
           collector.on('end', () => {
@@ -153,13 +154,15 @@ module.exports = {
                   winners.push(interaction.options.getString(i.toString()));
                 }
               }
-              const totalVotes = embed.fields[0].value;
+              const totalVotes = embed.fields.value;
               embed.setDescription(`Poll ended <t:${timestamp}:R>`)
               embed.setFields([])
+
               if (winners.length == 1) embed.addFields([{ name: 'Winner', value: `**${winners}** with **${maxLength}** votes`, inline: true }])
               else if (winners.length > 1) embed.addFields([{ name: 'Winners', value: `**${winners}** with **${maxLength}** votes each`, inline: true }])
-              else embed.setDescription(`There was no winner (no votes have been performed)`)
+              else embed.setDescription('There was no winner (no votes have been performed)')
               embed.addFields([{ name: 'Total votes', value: totalVotes, inline: true }])
+
               message.edit({ embeds: [embed], components: [] });
               delete pollsList[pollId];
             }
@@ -174,8 +177,8 @@ module.exports = {
         interaction.reply({ embeds: [embed] });
       }
     } else {
-      embed.setTitle(`Error`)
-      embed.setDescription(`You don't have sufficient permissions to execute that command`)
+      embed.setTitle('Error')
+      embed.setDescription("You don't have sufficient permissions to execute that command")
       embed.setColor(Colors.Red)
       interaction.reply({ embeds: [embed], ephemeral: true });
     }

@@ -4,7 +4,7 @@
 
 # Tinan
 
-The Discord bot for the [AvdanOS Community Discord server](https://discord.gg/avdanos), built with discord.js v14.0.2.
+The Discord bot for the [AvdanOS Community Discord server](https://discord.gg/avdanos), built with discord.js v14.0.3.
 
 <div align="center">
 
