@@ -1,25 +1,18 @@
-const getFiles = require('../utils/getFiles');
+const fs = require('fs');
+const path = require('path');
 
-module.exports = (client) => {
-  const path = '\\events';
-  const events = [];
-  const eventFiles = getFiles(`${path}`, '.js');
+module.exports = async (client) => {  
+  const discordEvents = [];
+  const eventPath = './events';
 
-  for (const eventFile of eventFiles) {
-    const event = require(eventFile);
-    events[event.name.toLowerCase()] = event;
-    
-  // try {
-  //   if (eventFile.once) client.once(events[event.name], () => callback());
-  //   else client.on(events[event.name], () => callback());
-  // } catch (error) {
-  //   console.error(error);
-  // }
+  fs.readdirSync(path.join(process.cwd(), eventPath, '/discord')).filter(file => file.endsWith('.js')).forEach(async file => {
+    const pull = require(path.join(process.cwd(), eventPath, '/discord', file));
+    discordEvents.push(pull);
+
     try {
-      client.on(events[event.name].callback(client));
+      for (evt of discordEvents) { await client.on(evt.callback(client), () => { }) }
     } catch (error) {
       console.error(error);
     }
-    console.log(events);
-  }
+  });
 };
