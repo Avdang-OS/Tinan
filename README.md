@@ -13,10 +13,6 @@ The Discord bot for the [AvdanOS Community Discord server](https://discord.gg/av
 
 </div>
 
-# Current state
-
-Currently, we are porting the bot to TypeScript.
-
 # Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution guidelines.

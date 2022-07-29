@@ -30,12 +30,12 @@ export default {
 
     interaction.reply({ embeds: [embed], components: [buttons as any], ephemeral: true });
 
-    const filter = (btnInteraction: ButtonInteraction) => {
-      return interaction.user.id != btnInteraction.user.id || interaction.user.id == btnInteraction.user.id;
+    const filter = (buttonInteraction: ButtonInteraction) => {
+      return interaction.user.id != buttonInteraction.user.id || interaction.user.id == buttonInteraction.user.id;
     }
     const collector = interaction.channel?.createMessageComponentCollector({ filter: filter as any, max: 1, time: 30000 });
 
-    collector?.on('end', (collection: any ) => {
+    collector?.on('end', (collection: any) => {
       if (collection.first().customId == 'primary') {
         embed.setTitle('you clicked a primary button')
         embed.setDescription('you clicked a primary button')

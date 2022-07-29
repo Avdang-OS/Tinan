@@ -2,9 +2,7 @@
 
 ## Prerequisites
 
-If you want to contribute to this repository, you need basic knowledge of JavaScript and discord.js. 
-
-The bot is getting ported to TypeScript, so it's also strongly recommended for you to understand TypeScript.
+If you want to contribute to this repository, you need basic knowledge of TypeScript and discord.js. 
 
 You have to have a contribution fork of this repository.
 
@@ -37,10 +35,8 @@ Step 5: Reset your bot's token and copy it. It will be used later.
 ## Making it work
 
 # **Step 6: .env magic (huge for devs to not add any example.env's into the repo)**
-
-## **Step 6.1: Inside the `src` folder, make a `.env` file.**
-
-## **Step 6.2: Type `TOKEN=your bot token`**
+## **Step 6.1: Make a `.env` file in the project's root directory.**
+## **Step 6.2: Inside `.env`, type `TOKEN=your bot token`.**
 
 Step 7: In your terminal, run `npm install`. It will install all the modules needed to run the bot.
 

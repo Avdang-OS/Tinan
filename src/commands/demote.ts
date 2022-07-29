@@ -1,5 +1,5 @@
 import { EmbedBuilder, ApplicationCommandOptionType, Colors } from 'discord.js';
-import type { GuildMemberRoleManager } from 'discord.js';
+import type { GuildMemberRoleManager, Role } from 'discord.js';
 import type { Tinan } from '../global';
 
 export default {
@@ -56,7 +56,7 @@ export default {
       }
 
       // If managers
-      if (member.roles.cache.some(role => ['993524668503949322', '986269171111297036'].includes(role.id))) {
+      if (member.roles.cache.some((role: Role) => ['993524668503949322', '986269171111297036'].includes(role.id))) {
         const embed = new EmbedBuilder()
           .setTitle('You can not demote a manager.')
           .setColor(Colors.Red)
@@ -66,7 +66,7 @@ export default {
 
       // Remove role from a user, if exists.
       rolesToRemove.forEach(id => {
-        if (member.roles.cache.some(role => role.id === id)) {
+        if (member.roles.cache.some((role: Role) => role.id === id)) {
           let role = interaction.guild?.roles.cache.get(id);
           member.roles.remove(role);
           removedRoles.push(`<@&${id}>`);
