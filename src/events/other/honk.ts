@@ -1,9 +1,10 @@
-const { multiReact } = require('../../utils/multiReact');
+import { multiReact } from '../../utils/multiReact';
+import type { Tinan } from '../../global';
 
-module.exports = {  
+export default {
   name: ['honk'],
-  callback: async (message) => {
+  callback: async message => {
     // const goosStanding = await message.guild.emojis.fetch('993799647015481397').catch(() => { return '🦆' });
     await multiReact(message, '🦆🇭🇴🇳🇰👍') 
   }
-};
+} as Tinan.OtherEvent;

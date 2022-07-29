@@ -1,11 +1,12 @@
-const { EmbedBuilder, ApplicationCommandOptionType, Colors } = require('discord.js');
+import { EmbedBuilder, ApplicationCommandOptionType, Colors } from 'discord.js';
+import type { Tinan } from '../../global'; 
 
 /**
  * @file This is an example of options.
  * @author AvdanOS
  */
 
-module.exports = {
+export default {
   name: 'option',
   description: 'this is an option example',
   options: [
@@ -13,7 +14,7 @@ module.exports = {
       name: 'option',
       description: 'option',
       type: ApplicationCommandOptionType.String,
-      required: true, // or false
+      required: true, // Or false
       choices: [
         {
           name: 'yes',
@@ -26,8 +27,8 @@ module.exports = {
       ]
     }
   ],
-  callback: (interaction) => {
-    const option = interaction.options.getString('option');
+  callback: interaction => {
+    const option = (interaction.options as any).getString('option');
     let embed = new EmbedBuilder()
     
     if (option == 'yes') {
@@ -39,4 +40,4 @@ module.exports = {
     }
     interaction.reply({ embeds: [embed], ephemeral: true });
   }  
-};
+} as Tinan.Command;

@@ -1,7 +1,7 @@
-const { Client, GatewayIntentBits, ActivityType } = require('discord.js');
-require('dotenv').config();
-const commands = require('./handlers/cmdHandler');
-const events = require('./handlers/eventHandler');
+import { Client, GatewayIntentBits, ActivityType } from 'discord.js';
+import {} from 'dotenv/config';
+// import commands from './handlers/cmdHandler';
+import events from './handlers/eventHandler.js';
 
 const client = new Client({
   presence: {
@@ -10,17 +10,17 @@ const client = new Client({
       type: ActivityType.Watching,
     }],
   },
-	intents: [
+  intents: [
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
   ],
 });
-module.exports = client;
 
 client.on('ready', () => {
-  commands(client);
+  // commands(client);
   events(client);
   console.log('Start completed.');
-})
-client.login(process.env.DISCORD_TOKEN);
+});
+
+client.login(process.env.TOKEN);

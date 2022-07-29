@@ -1,14 +1,15 @@
-const { EmbedBuilder, Colors } = require('discord.js');
+import { EmbedBuilder, Colors } from 'discord.js';
+import type { Tinan } from '../../global';
 
 /**
  * @file This is an example of an embed.
  * @author AvdanOS
  */
 
-module.exports = {
+export default {
   name: 'embed',
   description: 'this is an embed example',
-  callback: (interaction) => {
+  callback: interaction => {
     const embed = new EmbedBuilder()
       .setTitle('example')
       .setDescription('this is an example of an embed')
@@ -21,4 +22,4 @@ module.exports = {
     
     interaction.reply({ embeds: [embed], ephemeral: true });
   }  
-};
+} as Tinan.Command;

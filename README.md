@@ -1,5 +1,3 @@
-# Important: we are migrating to a new [Discord server.](https://discord.gg/avdanos)
-
 # Notice: Pull Requests on this repository won't be reviewed often due to the main focus being the Desktop Environment.
 
 # Tinan
@@ -17,8 +15,8 @@ The Discord bot for the [AvdanOS Community Discord server](https://discord.gg/av
 
 # Current state
 
-Currently, we are rewriting the bot to TypeScript.
+Currently, we are porting the bot to TypeScript.
 
 # Contributing
 
-See `CONTRIBUTING.md` for contributing guidelines.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution guidelines.
