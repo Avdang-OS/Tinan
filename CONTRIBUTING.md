@@ -10,7 +10,7 @@ You have to have a contribution fork of this repository.
 
 - 2 space indent, no tab.
 - `const` by default and `let` for reassignable. 
-- SCREAMING_SNAKE_CASE for `const` and camelCase for `let` and `var`.
+- SCREAMING_SNAKE_CASE for `const` and camelCase for `let`.
 
 ## Setting up a Discord bot
 
@@ -22,7 +22,7 @@ Step 3: Click on the "Bot" button on the left side of your screen and create a n
 
 ### Step 4. Invite your bot to your server.
 
-Step 4.1: Click on "OAuth2", afterward "URL Generator". Select `bot` and `applications.commands`.
+Step 4.1: Click on "OAuth2", afterward "URL Generator". Select `bot` and `applications.commands` in the list of scopes.
 
 Step 4.2: Select "Administrator" in the list of bot permissions.
 
@@ -52,11 +52,11 @@ Step 2: Copy your channel's ID by right clicking on it and selecting `Copy ID`.
 
 Step 3: Paste the channel's ID into your config.json file.
 
-## How to make commands/events
+## How to make commands or events
 
-If you want to make commands, you can view example commands in the `examples/commands` folder.
+If you want to create commands, you can view example commands in the `examples/commands` folder.
 
-If you want to make events, you can view example events in the `examples/events` folder.
+If you want to create events, you can view example events in the `examples/events` folder.
 
 ## Pull requests
 

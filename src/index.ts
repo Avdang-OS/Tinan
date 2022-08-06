@@ -1,8 +1,8 @@
 import { Client, GatewayIntentBits, ActivityType } from 'discord.js';
 import { config } from 'dotenv';
-config();
 // import commands from './handlers/cmdHandler';
 import events from './handlers/eventHandler.js';
+config();
 
 const client = new Client({
   presence: {

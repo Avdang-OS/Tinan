@@ -27,6 +27,7 @@ export default {
       ]
     }
   ],
+  
   callback: interaction => {
     const option = (interaction.options as any).getString('option');
     let embed = new EmbedBuilder()

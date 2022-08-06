@@ -1,6 +1,8 @@
-const { EmbedBuilder, ApplicationCommandOptionType, Colors } = require('discord.js');
+import { EmbedBuilder, ApplicationCommandOptionType, Colors } from 'discord.js';
+import type { Channel, TextChannel } from 'discord.js';
+import type { Tinan } from '../global';
 
-module.exports = {
+export default {
   name: 'suggest',
   description: 'Sends your idea',
   options: [
@@ -18,20 +20,20 @@ module.exports = {
     },
   ],
 
-  callback: async (interaction) => {
+  callback: async interaction => {
     const title = interaction.options.getString('title');
     const text = interaction.options.getString('description');
 
     const ideaEmbed = new EmbedBuilder()
-      .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() })
+      .setAuthor({ name: interaction.user.username, iconURL: interaction.user.avatarURL() as string })
       .setTitle(title)
       .setDescription(text)
-      .setColor(Colors.Blue)
+      .setColor(Colors.Blue);
 
-    const channel = interaction.guild.channels.cache.find(cnl => cnl.id === '993466949889703996');
-    const msg = await channel.send({ embeds: [ideaEmbed] });
+    const channel = interaction.guild?.channels.cache.find((channel: Channel) => channel.id === '993466949889703996');
+    const msg = await (channel as TextChannel).send({ embeds: [ideaEmbed] });
     
-    msg.startThread({ name: title });
+    msg.startThread({ name: title as string });
 
     const embed = new EmbedBuilder()
       .setTitle('Your suggestion was sent')
@@ -39,4 +41,4 @@ module.exports = {
 
     interaction.reply({ embeds: [embed], ephemeral: true })
   }
-}
+} as Tinan.Command;

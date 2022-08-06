@@ -21,7 +21,7 @@ export default {
   ],
   
   callback: async interaction => {
-    let memberRoles = interaction?.member?.roles as GuildMemberRoleManager;
+    let memberRoles = interaction.member?.roles as GuildMemberRoleManager;
     if (memberRoles.cache.some(role => ['993524668503949322', '986269171111297036'].includes(role.id))) {  // Check if a member has the manager role
       const member = (interaction.options as any).getMember('user');
       const reason = (interaction.options as any).getString('reason');
@@ -73,38 +73,37 @@ export default {
         }
       });
 
-
       const embed = new EmbedBuilder();
 
-      // If roles were removed.
-      if (removedRoles.length > 0) {
-        embed
-          .setTitle(`${member.user.username}#${member.user.discriminator} was demoted`)
-          .setDescription('Removed roles:\n\n' + removedRoles.join('\n'))
-          .setColor(Colors.Blue);
-
-        const demotedNotify = new EmbedBuilder()
-          .setTitle(`You were demoted by ${interaction.user.username}#${interaction.user.discriminator}`)
-          .setDescription(reason ? ('Reason: ' + reason): 'No reason was provided')
-          .setColor(Colors.Red);
-
-        await member
-          .send({ embeds: [demotedNotify] })
-          .catch(() => embed.setFooter({ text: 'P.S: Bot failed to send a DM' }));
-      } else {
+      if (removedRoles.length == 0) {
         embed
           .setTitle(`${member.user.username}#${member.user.discriminator} can't be demoted`)
           .setDescription('This user has no team manager roles')
           .setColor(Colors.Red);
-      }
-      
-      interaction.reply({ embeds: [embed], ephemeral: removedRoles.length == 0 });
-    } else {
-      const embed = new EmbedBuilder()
-        .setTitle('You are not allowed to use this command')
-        .setColor(Colors.Red)
 
-      interaction.reply({ embeds: [embed], ephemeral: true });
+        interaction.reply({ embeds: [embed], ephemeral: removedRoles.length == 0 });
+        return;
+      }
+
+      // If roles were removed.
+      embed
+        .setTitle(`${member.user.username}#${member.user.discriminator} was demoted`)
+        .setDescription('Removed roles:\n\n' + removedRoles.join('\n'))
+        .setColor(Colors.Blue);
+
+      const demotedNotify = new EmbedBuilder()
+        .setTitle(`You were demoted by ${interaction.user.username}#${interaction.user.discriminator}`)
+        .setDescription(reason ? `Reason: ${reason}` : 'No reason was provided')
+        .setColor(Colors.Red);
+
+      await member
+        .send({ embeds: [demotedNotify] })
+        .catch(() => embed.setFooter({ text: 'P.S: Bot failed to send a DM' }));
+    
+      interaction.reply({ embeds: [embed], ephemeral: removedRoles.length == 0 });
+
+    } else {
+      
     }
   }
 } as Tinan.Command;

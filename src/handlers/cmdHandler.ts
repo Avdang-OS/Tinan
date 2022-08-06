@@ -5,7 +5,6 @@ import type { Client } from 'discord.js';
 
 const COMMAND_PATH = './commands';
 export default async (client: Client) => {
-  global.pollsList = {};
   const commands = getCommands();
 
   // Attach all the commands to every server 
