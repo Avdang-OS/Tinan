@@ -1,4 +1,7 @@
-import type { CommandInteractionOption, CommandInteraction, Client, Message } from 'discord.js';
+import type {
+  CommandInteractionOption, ChatInputCommandInteraction, Client,
+  Message, 
+} from 'discord.js';
 
 declare global {
   var pollsList: Tinan.PollList
@@ -15,11 +18,21 @@ export namespace Tinan {
     required?: boolean
   }
 
+  /**
+   * Represents a Discord command.
+   */
   export interface Command {
+    /**
+     * The name of the command: e.g. /[name]
+     */
     name: string,
+
+    /**
+     * 
+     */
     desctiption?: string,
-    options?: unknown[],
-    callback(interaction: CommandInteraction): Promise<void> | void
+    options?: _CommandInteractionOption[],
+    callback(interaction: ChatInputCommandInteraction): Promise<void> | void
   }
 
   export interface DiscordEvent {
@@ -32,7 +45,6 @@ export namespace Tinan {
   }
 
   type ExtractMembers<T extends unknown[]> = T[number]; 
-
 
   interface OtherEventRegExp<T extends string[]> {
     name: RegExp[],

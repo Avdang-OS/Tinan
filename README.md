@@ -4,6 +4,8 @@
 
 The Discord bot for the [AvdanOS Community Discord server](https://discord.gg/avdanos), built with discord.js v14.0.3.
 
+It's made for entertaining users with events like "honk", "bread" and for making managers' lives easier with commands like "demote".
+
 <div align="center">
 
 ![Banner](https://raw.githubusercontent.com/Avdan-OS/.github/main/banner/Tinan.png)

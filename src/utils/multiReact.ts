@@ -5,4 +5,3 @@ export const multiReact = async (msg: Message, emotes: string) => {
     await msg.react(emote).catch(console.error); 
   }
 }
-
