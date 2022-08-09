@@ -1,9 +1,10 @@
+import { Invertible, invertibleLookup } from "../utils/syntax";
 import {
   Embed, EmbedBuilder, Message,
+  PermissionFlagsBits,
   PermissionResolvable, TextChannel, User 
 } from "discord.js";
 export const EXEC_SYMBOL = Symbol.for("TINAN.MESSAGE.EXEC");
-
 
 type Func<T> = (msg : Message) => Promise<boolean> | boolean;
 
@@ -29,14 +30,18 @@ export class MessageHandler {
   }
 
   constructor(pattern: RegExp | string) {
-    this.#requirements = { pattern: 
+    this.#requirements = {
+      pattern: 
       msg => {
         if (pattern instanceof RegExp) {
           return pattern.test(msg.content);
         }
 
         return msg.content.includes(pattern);
-      }
+      },
+      // By default, do not respond to bots -- that ends badly...
+      isNotBot:
+        msg => !msg.author.bot
     };
   }
 
@@ -53,7 +58,8 @@ export class MessageHandler {
       hasId: (id : string) => {
         this.#requirements = {
           ...this.#requirements,
-          channelId: (msg : Message<boolean>) => {return msg.channelId === id; }
+          channelId: (msg : Message<boolean>) =>
+            invertibleLookup<string>(id => msg.channelId === id, id)
         };
       }
     }
@@ -66,35 +72,105 @@ export class MessageHandler {
    */
   author() {
     return {
-      is: (...userId: string[]) => {
-        return RequirementGen("is")(
-          msg => userId.some(id => msg.author.id === id),
+
+      /**
+       * Checks if the message came from specific users with IDs or tags.
+       * @param userIdOrName The users' Discord IDs or tags (Username#4738)
+       */
+      hasName: (...userIdOrName: string[]) => {
+        return RequirementGen("hasName")(
+          msg => userIdOrName.some(id =>
+              invertibleLookup<string>(
+                u => msg.author.id === u || msg.author.tag === u,
+                id
+              )
+          ),
           this
         );
       },
+
+
+      /**
+       * Checks if the message came from specific users with IDs or tags.
+       * @param userIdOrName The users' Discord IDs or tags (Username#4738)
+       */
+       hasNames: (...userIdOrName: string[]) => {
+        return RequirementGen("hasNames")(
+          msg => userIdOrName.every(id =>
+              invertibleLookup<string>(
+                u => msg.author.id === u || msg.author.tag === u,
+                id
+              )
+          ),
+          this
+        );
+      },
+
+      /**
+       * Checks if the author has one of these roles.
+       * @param roles the roles to check for.
+       */
       hasRole: (...roles : string[]) => 
         RequirementGen("hasRole")(
-          msg => roles.some(acceptableRole => msg.member?.roles.cache.find(r => r.id === acceptableRole)),
+          msg => roles.some(
+            roleToCheck =>
+              invertibleLookup<string>(
+                acceptableRole => !!msg.member?.roles.cache.find(r => r.id === acceptableRole),
+                roleToCheck
+              )
+          ),
           this
         ),
 
-      hasRoles: (...roles : string[]) =>
+      /**
+       * Checks if author has *all* the desired roles. 
+       * @param roles The roles to check for.
+       * @returns 
+       */
+       hasRoles: (...roles : string[]) => 
         RequirementGen("hasRoles")(
-          msg => roles.every(acceptableRole => !!msg.member?.roles.cache.find(r => r.id === acceptableRole)),
+          msg => roles.every(
+            roleToCheck =>
+              invertibleLookup<string>(
+                acceptableRole => !!msg.member?.roles.cache.find(r => r.id === acceptableRole),
+                roleToCheck 
+              )
+          ),
           this
         ),
 
-      hasPermission: (...permissions : PermissionResolvable[]) => 
+      /**
+       * Checks if the message author has one of the listed permissions.
+       * @param permissions Permissions to check for.
+       * @returns 
+       */
+      hasPermission: (...permissions : Invertible<keyof typeof PermissionFlagsBits>[]) => 
         RequirementGen("hasPermission")(
-          msg => permissions.some(acceptablePerm => !!msg.member?.roles.cache.find(r => r.id === acceptablePerm)),
+          msg => permissions.some(acceptablePerm => 
+            invertibleLookup<keyof typeof PermissionFlagsBits>(
+              perm => !!msg.member?.permissions.has(perm),
+              acceptablePerm
+            ),
+          ),
           this
         ),
 
-      hasPermissions: (...permissions : string[]) => 
+      /**
+       * Checks if the message author has all of the listed permissions.
+       * @param permissions Permissions to check for.
+       * @returns 
+       */
+       hasPermissions: (...permissions : Invertible<keyof typeof PermissionFlagsBits>[]) => 
         RequirementGen("hasPermissions")(
-          msg => permissions.every(acceptablePerm => !!msg.member?.roles.cache.find(r => r.id === acceptablePerm)),
+          msg => permissions.every(acceptablePerm => 
+            invertibleLookup<keyof typeof PermissionFlagsBits>(
+              perm => !!msg.member?.permissions.has(perm),
+              acceptablePerm
+            ),
+          ),
           this
         ),
+
     };
   }
 
@@ -104,13 +180,40 @@ export class MessageHandler {
    * Reacts to the message if the requirements are met.
    * @param reactions String of reactions to react
    */
-  react(reactions: string): this {
-    this.#callback = async (msg) => {
-      for (const emote of reactions) {
-        await msg.react(emote);
-      }
-    };
+  react(reactions: string | string[]): this {
+    this.#callback = async msg => {
 
+      // Helper function because unicode hates me
+      const reactMultEmojiString = async (possibleEmote : string) => {
+        /*
+           * @Sammy99jsp, What the heck are you doing with this match nonsense? 
+           * The /./gui RegExp will hopefully not mangle the unicode glyphs
+           * Unlike str.split("") or [...str]
+           */
+        for (const emoji of possibleEmote.match(/./gui) as RegExpMatchArray) {
+          await msg.react(emoji)
+            // This catch is because unicode is weird, and to not crash the bot for a weird character.
+            .catch(err => console.warn("Invalid emoji code point!"));
+        }
+      }
+      
+      if (reactions instanceof Array) {
+        for (const possibleEmote of reactions) {
+          // Is this is a custom emote with this id ?
+          if (/\d{19}/.test(possibleEmote)) {
+            await msg.react(possibleEmote);
+            continue;
+          }
+          
+          // Other boring emoji
+          await reactMultEmojiString(possibleEmote);
+        }
+      } else {
+        await reactMultEmojiString(reactions);
+      }
+
+    };
+// i will need proper epxlantion of tis
     return this;
   }
 
@@ -119,7 +222,7 @@ export class MessageHandler {
    * @param content the content of the reply message
    */
   reply(content: Parameters<typeof Message.prototype.reply>[0]): this {
-    this.#callback = async (msg) => {
+    this.#callback = async msg => {
       await msg.reply(content);
     };
 
@@ -162,8 +265,9 @@ export class MessageHandler {
       return;
     }
 
-    console.group("REJECTION")
-    console.log({msg, requirementResults})
+    // console.group("REJECTION")
+    // console.log({msg, requirementResults})
+    // console.groupEnd()
   }
 
   /**
@@ -173,16 +277,16 @@ export class MessageHandler {
    * @param msg Discord Message to test against.
    * @returns Array of results in order of the requirements.
    */
-  test(msg: Message): unknown  {
+  test(msg: Message): unknown {
     let requirements = Object.entries(this.#requirements).map(([type, func]) =>
       [type, func] as [string, (msg : Message) => boolean]
     );
 
     for (const [type, func] of requirements) {
-      if (!func(msg))
-        return [type, func];
-      return true;
+      if (!func(msg)) return [type, func];
     }
+    
+    return true;
   }
 
   /**
@@ -193,8 +297,3 @@ export class MessageHandler {
     console.log(this.#requirements);
   }
 }
-// i swear sammy invite me to the github repo or get into my fork because i inv'd you there!!!!!
-// rember!! i know you can forger but please rember this important thing
-// I HAVE THE AVDANG-OS THINGY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// we just forked alot of repos into 1 org with me and froxcey
-// but please get into repo i invited you there!!!!!!!!! i have a branch ready for you and afterwards you can see ur changes in the grand PR

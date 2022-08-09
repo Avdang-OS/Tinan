@@ -11,6 +11,8 @@
     "experimentalDecorators": true,
     "outDir": "dist",
     "baseUrl": "./src",
+    "rootDirs": ["src", "config"],
+    "sourceMap": true,
     "paths": {
       "@/*" : [
         "./*"
@@ -20,6 +22,6 @@
   "ts-node": {
     "esm": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"],
+  "include": ["src/**/*",],
+  "exclude": ["node_modules", "dist"],
 }

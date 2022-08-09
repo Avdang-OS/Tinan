@@ -1,9 +1,18 @@
-import { Client, ActivityType } from 'discord.js';
+import { Client, ActivityType, SlashCommandBuilder, Routes } from 'discord.js';
+import { REST } from '@discordjs/rest';
 import { config as env } from 'dotenv';
+
 import reactions from "../config/reactions.json";
 import { MessageHandler, EXEC_SYMBOL } from './handlers/message';
 import { substringOrRegex } from './utils/formatDetector';
+import commands from './handlers/commands';
+
+
 env();
+
+// Weird commands
+
+// Normal Bot stuff
 
 let client = new Client({
   presence: {
@@ -19,8 +28,11 @@ let client = new Client({
   ],
 });
 
+const {interactionHandler} = commands();
 client.login(process.env.DISCORD_TOKEN);
-client.on("ready", () => {
+
+
+client.on("ready", bot => {
   console.log("Ready!");
 
   // Register all the callbacks and stuff.
@@ -31,19 +43,14 @@ client.on("ready", () => {
         .react(reactions)
     );
 
-  client.on("messageCreate", msg => {
-    let test = new MessageHandler(/apples/gi)
-      .author()
-        .is("205658714311622656", "725985503177867295")
-      .reply("Senpai has returned!");
+  bot.on("messageCreate", msg => {
     [
-      ...messagesToReact,
-      test
+      ...messagesToReact
     ].forEach(handler => handler[EXEC_SYMBOL](msg));
   });
+
+
+  
+  bot.on("interactionCreate", interactionHandler);
 });
-// unhandled rejection... just like how your girlfriend's rejection was like
-// wow you're a chad! congratulations :party: :woo: :lessgo: I CANT EVEN EDIT MESSAGE.ts
-// it doesnt change upon u doing something + u cant see my edits\
-// can u make a new message.ts :weary: see if it fixes the issue
-// copy paste ur message.ts
+
