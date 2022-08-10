@@ -6,7 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "jest",
-    "start": "ts-node ./src/index.ts"
+    "dev": "tsc --watch & nodemon ./dist/src/ --watch dist/",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
