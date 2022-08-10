@@ -21,9 +21,13 @@
   },
   "dependencies": {
     "@discordjs/rest": "^1.0.1",
+    "@octokit/types": "^6.41.0",
+    "@types/moment": "^2.13.0",
     "@types/uuid": "^8.3.4",
     "discord.js": "^14.1.2",
     "dotenv": "^16.0.1",
+    "moment": "^2.29.4",
+    "octokit": "^2.0.4",
     "uuid": "^8.3.2"
   }
 }

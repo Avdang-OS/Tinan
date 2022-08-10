@@ -13,6 +13,7 @@
     "baseUrl": "./src",
     "rootDirs": ["src", "config"],
     "sourceMap": true,
+    "skipLibCheck": true,
     "paths": {
       "@/*" : [
         "./*"

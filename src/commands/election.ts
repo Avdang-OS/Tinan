@@ -1,5 +1,5 @@
 import type { Tinan } from "@/types";
-import { ActionRowBuilder, ButtonBuilder, ButtonComponent, ButtonStyle, EmbedBuilder, GuildMemberRoleManager, SlashCommandBuilder, SlashCommandRoleOption, SlashCommandStringOption } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonComponent, ButtonStyle, Colors, EmbedBuilder, GuildMemberRoleManager, SlashCommandBuilder, SlashCommandRoleOption, SlashCommandStringOption } from "discord.js";
 import { v4 as uuid } from "uuid";
 
 interface ElectionRoles {
@@ -70,6 +70,7 @@ class Election {
         .setFooter({
           text: "From Tinan"
         })
+        .setColor(Colors.Blue)
     )
   }
 }
@@ -110,7 +111,7 @@ export default {
       ),
 
     
-  interaction(cmd) {
+  command(cmd) {
     switch (cmd.options.getSubcommand()) {
       case "create":
 

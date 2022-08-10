@@ -1,9 +1,8 @@
 import { Tinan } from "../types";
-import { ButtonInteraction, ChatInputCommandInteraction, Interaction, REST, Routes, SlashCommandBuilder } from "discord.js";
+import { Interaction, REST, Routes, } from "discord.js";
 import fs from "fs";
 import { config as env } from "dotenv";
 import path from "path";
-
 env();
 
 export default function() {
@@ -12,11 +11,12 @@ export default function() {
     .filter(name => name.endsWith(".js"))
     .map(name => require(path.join(__dirname,`../commands/${name}`)).default as Tinan.Command);
   
-  // Register the commands with Discord or smthn
+  // Register the commands with Discord or something
   const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN ?? "");
   
 
 
+  // Load API things on every server.
   Promise.all(
     (process.env.GUILD_ID ?? "").split(",")
       .map(guild => 
@@ -38,9 +38,9 @@ export default function() {
 
   return {
     interactionHandler : async (interaction : Interaction) => {
-      console.log(interaction)
+      // console.log(interaction)
       if(interaction.isChatInputCommand()) {
-        await commandNameMap[interaction.commandName].interaction(interaction);
+        await commandNameMap[interaction.commandName].command(interaction);
       }
 
       if(interaction.isButton()) {

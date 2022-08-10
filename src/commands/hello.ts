@@ -1,16 +1,15 @@
 import type { Tinan } from "@/types";
-import { ActionRowBuilder, ButtonBuilder, ButtonComponent, ButtonStyle, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, SlashCommandBuilder } from "discord.js";
 
 export default {
-  options: 
+  options:
     new SlashCommandBuilder()
-    .setName("hello")
-    .setDescription("Test command to make me cry :("),
+      .setName("hello")
+      .setDescription("Test command to make me and Goos cry (goos cries out of seizure) :("),
 
-    
-  interaction(cmd) {
+  command(cmd) {
 
-    const row = new ActionRowBuilder()
+    const row : any = new ActionRowBuilder()
       .addComponents(
         new ButtonBuilder()
           .setCustomId("hello-000")
@@ -19,7 +18,7 @@ export default {
       );
 
     cmd
-      .reply({content : "Hello there!", components: [row as any]});
+      .reply({content : "Hello there!", components: [row]});
   },
   
   button(btn) {

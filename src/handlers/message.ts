@@ -211,9 +211,8 @@ export class MessageHandler {
       } else {
         await reactMultEmojiString(reactions);
       }
-
     };
-// i will need proper epxlantion of tis
+
     return this;
   }
 

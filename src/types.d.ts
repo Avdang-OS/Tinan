@@ -11,7 +11,10 @@ declare global {
 export namespace Tinan {
   export interface Command {
     options: SlashCommandBuilder,
-    interaction : (cmd : ChatInputCommandInteraction) => Promise<void>; 
+    /**
+     * Handles any {@link ChatInputCommandInteraction} events.
+     */
+    command : (cmd : ChatInputCommandInteraction) => Promise<void>; 
     button ?: (btn : ButtonInteraction) => Promise<void>;
   }
 }
